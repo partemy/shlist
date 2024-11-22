@@ -1,6 +1,5 @@
 package dev.partemy.shlist.common.data.remote.api.impl
 
-import dev.partemy.shlist.common.data.ResultState
 import dev.partemy.shlist.common.data.remote.ApiRoutes
 import dev.partemy.shlist.common.data.remote.api.ShoppingListService
 import dev.partemy.shlist.common.data.remote.apiCall
@@ -11,6 +10,7 @@ import dev.partemy.shlist.common.data.remote.model.GetAllListsResult
 import dev.partemy.shlist.common.data.remote.model.GetListResult
 import dev.partemy.shlist.common.data.remote.model.RemoveListItemResult
 import dev.partemy.shlist.common.data.remote.model.RemoveListResult
+import dev.partemy.shlist.common.domain.ResultState
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.parameter

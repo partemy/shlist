@@ -1,6 +1,5 @@
 package dev.partemy.shlist.common.data.remote.api
 
-import dev.partemy.shlist.common.data.ResultState
 import dev.partemy.shlist.common.data.remote.model.AddListItemResult
 import dev.partemy.shlist.common.data.remote.model.CreateListResult
 import dev.partemy.shlist.common.data.remote.model.CrossOffListItemResult
@@ -8,6 +7,7 @@ import dev.partemy.shlist.common.data.remote.model.GetAllListsResult
 import dev.partemy.shlist.common.data.remote.model.GetListResult
 import dev.partemy.shlist.common.data.remote.model.RemoveListItemResult
 import dev.partemy.shlist.common.data.remote.model.RemoveListResult
+import dev.partemy.shlist.common.domain.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface ShoppingListService {

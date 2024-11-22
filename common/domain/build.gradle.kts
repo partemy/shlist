@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -11,15 +13,10 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            api(libs.koin.android)
-            api(libs.koin.androidx.compose)
+
         }
         commonMain.dependencies {
-            implementation(projects.common.data)
-            implementation(projects.common.database)
 
-            api(libs.koin.core)
-            api(libs.koin.compose)
         }
         iosMain.dependencies {
 
@@ -28,10 +25,10 @@ kotlin {
 }
 
 android {
-    namespace = "dev.partemy.shlist.common.core"
+    namespace = "dev.partemy."
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }

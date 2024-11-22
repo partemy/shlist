@@ -1,6 +1,6 @@
 package dev.partemy.shlist.common.data.remote
 
-import dev.partemy.shlist.common.data.ResultState
+import dev.partemy.shlist.common.domain.ResultState
 
 suspend fun <T : Any?> apiCall(apiCall: suspend () -> T): ResultState<T> {
     return try {

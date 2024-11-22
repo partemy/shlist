@@ -16,6 +16,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
+            implementation(projects.common.domain)
             implementation(libs.bundles.ktor)
             api(libs.ktor.client.core)
         }

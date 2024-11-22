@@ -20,6 +20,7 @@ kotlin {
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.sqlite)
+            implementation(libs.koin.core)
         }
         iosMain.dependencies {
 

@@ -1,4 +1,4 @@
-package dev.partemy.shlist.common.data
+package dev.partemy.shlist.common.domain
 
 sealed class ResultState<out T> {
     data class Success<out T : Any?>(val data: T) : ResultState<T>()
