@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetListResult(
-    val item_list: List<ListItemDTO>,
+    val item_list: List<ShoppingListItemDTO>,
     val success: Boolean
 )

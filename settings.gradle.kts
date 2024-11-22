@@ -31,3 +31,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":common:data")
 include(":common:core")
+include(":common:database")
