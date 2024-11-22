@@ -46,6 +46,7 @@ kotlin {
 
             implementation(projects.common.data)
             implementation(projects.common.core)
+            implementation(projects.common.domain)
         }
     }
 }

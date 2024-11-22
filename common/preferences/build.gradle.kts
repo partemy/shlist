@@ -15,7 +15,7 @@ kotlin {
 
         }
         commonMain.dependencies {
-            implementation(libs.kotlin.coroutines.core)
+            implementation(libs.androidx.datastore.preferences.core)
         }
         iosMain.dependencies {
 
@@ -24,7 +24,7 @@ kotlin {
 }
 
 android {
-    namespace = "dev.partemy.shlist.common.domain"
+    namespace = "dev.partemy.shlist.common.preferences"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

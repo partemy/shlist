@@ -4,6 +4,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(11)
     androidTarget()
     iosX64()
     iosArm64()
@@ -17,6 +18,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.common.data)
             implementation(projects.common.database)
+            implementation(projects.common.domain)
+            implementation(projects.common.preferences)
 
             api(libs.koin.core)
             api(libs.koin.compose)

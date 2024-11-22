@@ -11,7 +11,7 @@ import dev.partemy.shlist.common.domain.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface ShoppingListService {
-    suspend fun createShoppingList(key:String, name: String): Flow<ResultState<CreateListResult>>
+    suspend fun createShoppingList(key: String, name: String): Flow<ResultState<CreateListResult>>
     suspend fun removeShoppingList(listId: Int): Flow<ResultState<RemoveListResult>>
     suspend fun addToShoppingList(listId: Int, name: String, count: Int): Flow<ResultState<AddListItemResult>>
     suspend fun removeFromShoppingList(listId: Int, itemId: Int): Flow<ResultState<RemoveListItemResult>>

@@ -6,7 +6,7 @@ import dev.partemy.shlist.common.database.entity.ShoppingListItemDBO
 import dev.partemy.shlist.common.database.entity.ShoppingListDBO
 
 
-data class ShoppingListWithItems(
+data class ShoppingListWithItemsDBO(
     @Embedded val list: ShoppingListDBO,
     @Relation(
         parentColumn = "id",

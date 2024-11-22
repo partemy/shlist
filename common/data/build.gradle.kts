@@ -17,6 +17,8 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.common.domain)
+            implementation(projects.common.database)
+            implementation(projects.common.preferences)
             implementation(libs.bundles.ktor)
             api(libs.ktor.client.core)
         }
