@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface IShoppingListLocalDataSource {
 
-    fun getKey(): Flow<String?>
-
     fun getAllLists(): Flow<List<ShoppingList>>
 
     fun getAllListItems(listId: Int): Flow<List<ShoppingListItem>>

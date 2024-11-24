@@ -8,6 +8,7 @@ import dev.partemy.shlist.common.domain.ResultState
 import dev.partemy.shlist.common.domain.model.ShoppingList
 import dev.partemy.shlist.common.domain.repository.IShoppingListRepository
 import dev.partemy.shlist.common.domain.toResultState
+import dev.partemy.shlist.common.preferences.ShlistPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -29,17 +30,26 @@ import kotlin.coroutines.coroutineContext
 
 class ShoppingListRepository(
     private val shoppingListRemoteDataSource: IShoppingListRemoteDataSource,
-    private val shoppingListLocalDataSource: IShoppingListLocalDataSource
+    private val shoppingListLocalDataSource: IShoppingListLocalDataSource,
+    private val preferences: ShlistPreferences,
 ) : IShoppingListRepository {
 
     private val _shoppingListsFlow =
         MutableSharedFlow<ResultState<List<ShoppingList>>>(replay = 1)
     private val shoppingListFlow = _shoppingListsFlow.asSharedFlow()
 
-    override fun getAllShoppingLists(
-        key: String,
-    ): Flow<ResultState<List<ShoppingList>>> {
+    private val key = preferences.getString("key")
 
+    override suspend fun setKey(key: String) {
+        preferences.set("key", key)
+    }
+
+
+    override suspend fun getAllShoppingLists(
+
+    ): Flow<ResultState<List<ShoppingList>>> {
+        val key = key.first()
+            ?: return flow { ResultState.Failure<List<ShoppingList>>(exception = Exception("no key")) }
         val cachedShoppingLists = getAllListsFromDataBase()
         val remoteShoppingLists = shoppingListFlow
         val mergeStrategy: MergeStrategy<ResultState<List<ShoppingList>>> =
@@ -50,7 +60,9 @@ class ShoppingListRepository(
         return cachedShoppingLists.combine(remoteShoppingLists, mergeStrategy::merge)
     }
 
-    override suspend fun createShoppingList(key: String, name: String): Result<Nothing?> {
+    override suspend fun createShoppingList(name: String): Result<Nothing?> {
+        val key = key.first()
+            ?: return Result.failure(exception = Exception("no key"))
         val apiResult = shoppingListRemoteDataSource.createShoppingList(key, name)
         return if (apiResult.isSuccess) {
             syncWithServer(key)
@@ -62,7 +74,9 @@ class ShoppingListRepository(
         }
     }
 
-    override suspend fun deleteShoppingList(key: String, listId: Int): Result<Nothing?> {
+    override suspend fun deleteShoppingList(listId: Int): Result<Nothing?> {
+        val key = key.first()
+            ?: return Result.failure(exception = Exception("no key"))
         val apiResult = shoppingListRemoteDataSource.deleteShoppingList(listId)
         return if (apiResult.isSuccess) {
             syncWithServer(key)

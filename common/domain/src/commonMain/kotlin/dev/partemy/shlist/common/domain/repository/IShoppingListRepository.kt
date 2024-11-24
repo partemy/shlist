@@ -6,8 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IShoppingListRepository {
 
-    fun getAllShoppingLists(key: String): Flow<ResultState<List<ShoppingList>>>
-    suspend fun createShoppingList(key: String, name: String): Result<Nothing?>
-    suspend fun deleteShoppingList(key: String, listId: Int): Result<Nothing?>
+    suspend fun getAllShoppingLists(): Flow<ResultState<List<ShoppingList>>>
+    suspend fun createShoppingList(name: String): Result<Nothing?>
+    suspend fun deleteShoppingList(listId: Int): Result<Nothing?>
+    suspend fun setKey(key: String) //TODO remove
 
 }

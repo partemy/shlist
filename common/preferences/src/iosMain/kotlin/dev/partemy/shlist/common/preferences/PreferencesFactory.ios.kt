@@ -1,3 +1,5 @@
+package dev.partemy.shlist.common.preferences
+
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -14,8 +16,10 @@ actual object PreferencesFactory {
         error = null
     )
 
-    actual fun createPreferences(): Preferences =
-        Preferences(
+
+
+    actual fun createPreferences(): ShlistPreferences =
+        ShlistPreferences(
             createDataStore(
                 requireNotNull(documentDirectory).path + "/$dataStoreFileName"
             )

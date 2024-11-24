@@ -9,14 +9,11 @@ import dev.partemy.shlist.common.database.mapper.toShoppingListsBDO
 import dev.partemy.shlist.common.domain.model.ShoppingList
 import dev.partemy.shlist.common.domain.model.ShoppingListItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class ShoppingListLocalDataSource(
     private val dao: ShoppingListDao,
-    //  private val preferences: Preferences,
 ) : IShoppingListLocalDataSource {
-    override fun getKey() = flow { emit("") } //preferences.getString("key")
 
     override fun getAllLists(): Flow<List<ShoppingList>> =
         dao.getAllLists().map { it.map { it.list.toShoppingList() } }

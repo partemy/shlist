@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +28,13 @@ import org.koin.compose.koinInject
 @Composable
 @Preview
 fun App() {
-    ShoppingListScreen(viewModel = ShoppingListViewModel(repository = koinInject()), key = "vzv9aj")
+    ShoppingListScreen(viewModel = ShoppingListViewModel(repository = koinInject()))
 }
 
 @Composable
-fun ShoppingListScreen(viewModel: ShoppingListViewModel, key: String) {
+fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
     var items by remember { mutableStateOf(emptyList<ShoppingList>()) }
+    val ui = viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadShoppingLists()
@@ -48,18 +50,19 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel, key: String) {
                 modifier = Modifier.clickable {
                     viewModel.deleteShoppingList(
                         listId = item.id,
-                        key = key
                     )
                 }
             )
         }
         item {
-            Button(onClick = { viewModel.createShoppingList(key = key, name = "bob") }) {
+            Button(onClick = { viewModel.createShoppingList(name = "bob") }) {
                 Text("add new")
             }
         }
         item {
-            Button(onClick = { viewModel.emitFakeData() }) {}
+            Button(onClick = { viewModel.setKEy(); viewModel.loadShoppingLists() }) {
+                Text(text = ui.value.text)
+            }
         }
     }
 
@@ -75,16 +78,15 @@ class ShoppingListViewModel(
     private val _uiState = MutableStateFlow(StateFF())
     val uiState = _uiState.asStateFlow()
 
-    fun emitFakeData() {
+    fun setKEy() {
         viewModelScope.launch {
-            _uiState.value =
-                _uiState.value.copy(list = listOf(ShoppingList(id = 1, name = "daw", created = "")))
+            repository.setKey("vzv9aj")
         }
     }
 
     fun loadShoppingLists() {
         viewModelScope.launch {
-            repository.getAllShoppingLists(key = "vzv9aj").collect {
+            repository.getAllShoppingLists().collect {
                 when (it) {
                     is ResultState.Failure -> _uiState.value = _uiState.value.copy(list = it.data!!)
                     is ResultState.Loading -> _uiState.value = _uiState.value.copy(list = it.data!!)
@@ -94,15 +96,16 @@ class ShoppingListViewModel(
         }
     }
 
-    fun createShoppingList(key: String, name: String) {
+    fun createShoppingList(name: String) {
         viewModelScope.launch {
-            repository.createShoppingList(key, name)
+            val res =repository.createShoppingList(name)
+            if (res.isFailure) _uiState.value = _uiState.value.copy(text = res.exceptionOrNull().toString())
         }
     }
 
-    fun deleteShoppingList(key: String, listId: Int) {
+    fun deleteShoppingList(listId: Int) {
         viewModelScope.launch {
-            repository.deleteShoppingList(key, listId)
+            repository.deleteShoppingList(listId)
         }
     }
 }
