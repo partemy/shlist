@@ -18,7 +18,11 @@ interface IShoppingListLocalDataSource {
 
     suspend fun insertListItem(item: ShoppingListItem)
 
-    suspend fun deleteList(list: ShoppingList)
+    suspend fun insertListItems(item: List<ShoppingListItem>)
+
+    suspend fun replaceAllLists(item: List<ShoppingList>)
+
+    suspend fun deleteList(listId: Int)
 
     suspend fun deleteListItem(item: ShoppingListItem)
 

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlin.serialization)
+
 }
 
 kotlin {
@@ -13,17 +13,16 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
+
         }
         commonMain.dependencies {
             implementation(projects.common.domain)
             implementation(projects.common.database)
             implementation(projects.common.preferences)
-            implementation(libs.bundles.ktor)
-            api(libs.ktor.client.core)
+            implementation(projects.common.shlistApi)
         }
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+
         }
     }
 }

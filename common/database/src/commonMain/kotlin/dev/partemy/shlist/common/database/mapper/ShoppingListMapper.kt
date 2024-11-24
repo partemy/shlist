@@ -1,6 +1,5 @@
 package dev.partemy.shlist.common.database.mapper
 
-import dev.partemy.shlist.common.database.dao.ShoppingListDao
 import dev.partemy.shlist.common.database.entity.ShoppingListDBO
 import dev.partemy.shlist.common.domain.model.ShoppingList
 

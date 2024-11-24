@@ -5,5 +5,5 @@ import dev.partemy.shlist.common.domain.repository.IShoppingListRepository
 class GetAllShoppingListsUseCase(
     private val repository: IShoppingListRepository,
 ) {
-    operator suspend fun invoke(key: String) = repository.getAllShoppingLists(key)
+    operator fun invoke(key: String) = repository.getAllShoppingLists(key)
 }

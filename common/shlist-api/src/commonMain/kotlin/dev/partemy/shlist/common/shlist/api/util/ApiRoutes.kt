@@ -1,4 +1,4 @@
-package dev.partemy.shlist.common.data.remote
+package dev.partemy.shlist.common.shlist.api.util
 
 object ApiRoutes {
     const val CREATE_KEY = "/shopping/v2/CreateTestKey"

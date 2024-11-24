@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 
 class ShoppingListLocalDataSource(
     private val dao: ShoppingListDao,
-  //  private val preferences: Preferences,
+    //  private val preferences: Preferences,
 ) : IShoppingListLocalDataSource {
     override fun getKey() = flow { emit("") } //preferences.getString("key")
 
@@ -30,12 +30,19 @@ class ShoppingListLocalDataSource(
 
     override suspend fun insertList(list: ShoppingList) = dao.insertList(list.toShoppingListDBO())
 
-    override suspend fun insertLists(lists: List<ShoppingList>) = dao.insertLists(lists.toShoppingListsBDO())
+    override suspend fun insertLists(lists: List<ShoppingList>) =
+        dao.insertLists(lists.toShoppingListsBDO())
 
     override suspend fun insertListItem(item: ShoppingListItem) =
         dao.insertListItem(item.toShoppingListItemDBO())
 
-    override suspend fun deleteList(list: ShoppingList) = dao.deleteList(list.toShoppingListDBO())
+    override suspend fun insertListItems(item: List<ShoppingListItem>) =
+        dao.insertListItems(item.map { it.toShoppingListItemDBO() })
+
+    override suspend fun replaceAllLists(item: List<ShoppingList>) =
+        dao.replaceAllLists(item.toShoppingListsBDO())
+
+    override suspend fun deleteList(listId: Int) = dao.deleteList(listId)
 
     override suspend fun deleteListItem(item: ShoppingListItem) =
         dao.deleteListItem(item.toShoppingListItemDBO())

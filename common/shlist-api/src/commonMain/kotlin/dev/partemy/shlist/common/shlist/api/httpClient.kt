@@ -1,4 +1,4 @@
-package dev.partemy.shlist.common.data.remote
+package dev.partemy.shlist.common.shlist.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest

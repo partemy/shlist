@@ -1,4 +1,4 @@
-package dev.partemy.shlist.common.data.remote.model
+package dev.partemy.shlist.common.shlist.api.model
 
 import kotlinx.serialization.Serializable
 

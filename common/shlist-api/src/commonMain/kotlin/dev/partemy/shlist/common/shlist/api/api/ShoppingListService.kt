@@ -1,30 +1,27 @@
-package dev.partemy.shlist.common.data.remote.api.impl
+package dev.partemy.shlist.common.shlist.api.api
 
-import dev.partemy.shlist.common.data.remote.ApiRoutes
-import dev.partemy.shlist.common.data.remote.api.ShoppingListService
-import dev.partemy.shlist.common.data.remote.apiCall
-import dev.partemy.shlist.common.data.remote.model.AddListItemResult
-import dev.partemy.shlist.common.data.remote.model.CreateListResult
-import dev.partemy.shlist.common.data.remote.model.CrossOffListItemResult
-import dev.partemy.shlist.common.data.remote.model.GetAllListsResult
-import dev.partemy.shlist.common.data.remote.model.GetListResult
-import dev.partemy.shlist.common.data.remote.model.RemoveListItemResult
-import dev.partemy.shlist.common.data.remote.model.RemoveListResult
-import dev.partemy.shlist.common.domain.ResultState
+import dev.partemy.shlist.common.shlist.api.util.apiCall
+import dev.partemy.shlist.common.shlist.api.model.AddListItemResult
+import dev.partemy.shlist.common.shlist.api.model.CreateListResult
+import dev.partemy.shlist.common.shlist.api.model.CrossOffListItemResult
+import dev.partemy.shlist.common.shlist.api.model.GetAllListsResult
+import dev.partemy.shlist.common.shlist.api.model.GetListResult
+import dev.partemy.shlist.common.shlist.api.model.RemoveListItemResult
+import dev.partemy.shlist.common.shlist.api.model.RemoveListResult
+import dev.partemy.shlist.common.shlist.api.util.ApiRoutes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import kotlinx.coroutines.flow.Flow
 
-class ShoppingListServiceImpl(
+class ShoppingListService(
     private val httpClient: HttpClient,
-) : ShoppingListService {
+) : IShoppingListService {
 
     override suspend fun createShoppingList(
         key: String,
         name: String,
-    ): Flow<ResultState<CreateListResult>> =
+    ): Result<CreateListResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.CREATE_LIST) {
                 parameter(key = "key", value = key)
@@ -32,7 +29,7 @@ class ShoppingListServiceImpl(
             }.body<CreateListResult>()
         }
 
-    override suspend fun removeShoppingList(listId: Int): Flow<ResultState<RemoveListResult>> =
+    override suspend fun removeShoppingList(listId: Int): Result<RemoveListResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.REMOVE_LIST) {
                 parameter(key = "list_id", value = listId)
@@ -43,7 +40,7 @@ class ShoppingListServiceImpl(
         listId: Int,
         name: String,
         count: Int
-    ): Flow<ResultState<AddListItemResult>> =
+    ): Result<AddListItemResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.ADD_TO_LIST) {
                 parameter(key = "id", value = listId)
@@ -55,7 +52,7 @@ class ShoppingListServiceImpl(
     override suspend fun removeFromShoppingList(
         listId: Int,
         itemId: Int
-    ): Flow<ResultState<RemoveListItemResult>> =
+    ): Result<RemoveListItemResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.REMOVE_FROM_LIST) {
                 parameter(key = "list_id", value = listId)
@@ -63,21 +60,21 @@ class ShoppingListServiceImpl(
             }.body<RemoveListItemResult>()
         }
 
-    override suspend fun crossOffItem(itemId: Int): Flow<ResultState<CrossOffListItemResult>> =
+    override suspend fun crossOffItem(itemId: Int): Result<CrossOffListItemResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.CROSS_OFF) {
                 parameter(key = "item_id", value = itemId)
             }.body<CrossOffListItemResult>()
         }
 
-    override suspend fun getAllShoppingLists(key: String): Flow<ResultState<GetAllListsResult>> =
+    override suspend fun getAllShoppingLists(key: String): Result<GetAllListsResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.GET_ALL_LISTS) {
                 parameter(key = "key", value = key)
             }.body<GetAllListsResult>()
         }
 
-    override suspend fun getShoppingList(listId: Int): Flow<ResultState<GetListResult>> =
+    override suspend fun getShoppingList(listId: Int): Result<GetListResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.GET_LIST_ITEMS) {
                 parameter(key = "list_id", value = listId)

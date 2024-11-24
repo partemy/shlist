@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -12,27 +13,21 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            api(libs.koin.android)
-            api(libs.koin.androidx.compose)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
-            implementation(projects.common.data)
-            implementation(projects.common.database)
+            implementation(libs.bundles.ktor)
+            api(libs.ktor.client.core)
             implementation(projects.common.domain)
-            implementation(projects.common.preferences)
-            implementation(projects.common.shlistApi)
-
-            api(libs.koin.core)
-            api(libs.koin.compose)
         }
         iosMain.dependencies {
-
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
 
 android {
-    namespace = "dev.partemy.shlist.common.core"
+    namespace = "dev.partemy.shlist.common.shlist.api"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
