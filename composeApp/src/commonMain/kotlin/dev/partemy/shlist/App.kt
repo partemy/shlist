@@ -3,8 +3,8 @@ package dev.partemy.shlist
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -19,16 +19,18 @@ import androidx.lifecycle.viewModelScope
 import dev.partemy.shlist.common.domain.ResultState
 import dev.partemy.shlist.common.domain.model.ShoppingList
 import dev.partemy.shlist.common.domain.repository.IShoppingListRepository
+import dev.partemy.shlist.common.resources.ProvideShlistStrings
+import dev.partemy.shlist.common.resources.ZmeuaiResources
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 @Composable
-@Preview
 fun App() {
-    ShoppingListScreen(viewModel = ShoppingListViewModel(repository = koinInject()))
+    ProvideShlistStrings {
+        ShoppingListScreen(viewModel = ShoppingListViewModel(repository = koinInject()))
+    }
 }
 
 @Composable
@@ -56,7 +58,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
         }
         item {
             Button(onClick = { viewModel.createShoppingList(name = "bob") }) {
-                Text("add new")
+                Text(ZmeuaiResources.strings.text)
             }
         }
         item {

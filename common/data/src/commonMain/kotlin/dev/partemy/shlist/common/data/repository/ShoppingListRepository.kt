@@ -45,9 +45,7 @@ class ShoppingListRepository(
     }
 
 
-    override suspend fun getAllShoppingLists(
-
-    ): Flow<ResultState<List<ShoppingList>>> {
+    override suspend fun getAllShoppingLists(): Flow<ResultState<List<ShoppingList>>> {
         val key = key.first()
             ?: return flow { ResultState.Failure<List<ShoppingList>>(exception = Exception("no key")) }
         val cachedShoppingLists = getAllListsFromDataBase()
