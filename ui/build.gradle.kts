@@ -22,6 +22,8 @@ kotlin {
             api(compose.material3)
             api(compose.runtime)
             api(libs.androidx.lifecycle.viewmodel)
+            api(libs.jetbrains.navigation.compose)
+            api(libs.serialization)
         }
         iosMain.dependencies {
 

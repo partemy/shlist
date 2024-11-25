@@ -51,7 +51,8 @@ import shlist.common.resources.generated.resources.plus
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = koinInject()
+    viewModel: MainViewModel = koinInject(),
+    navigateToList: (Int) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
@@ -62,6 +63,7 @@ fun MainScreen(
         Content(
             state = uiState.value,
             onDeleteClick = { viewModel.onTriggerEvent(MainViewEvent.OnDeleteClick(it)) },
+            onCardClick = navigateToList
         )
     }
 
@@ -78,6 +80,7 @@ fun MainScreen(
 private fun Content(
     state: MainViewState,
     onDeleteClick: (Int) -> Unit,
+    onCardClick: (Int) -> Unit,
 ) {
     if (state.lists.isEmpty())
         Box(
@@ -96,7 +99,11 @@ private fun Content(
             modifier = Modifier.fillMaxSize()
         ) {
             items(state.lists, key = { item -> item.id }) { list ->
-                ShoppingListCard(name = list.name, onActionClick = { onDeleteClick(list.id) })
+                ShoppingListCard(
+                    name = list.name,
+                    onDeleteClick = { onDeleteClick(list.id) },
+                    onCardClick = { onCardClick(list.id) }
+                )
             }
         }
 }
@@ -184,7 +191,8 @@ private fun CreateListDialog(
 private fun ShoppingListCard(
     modifier: Modifier = Modifier,
     name: String,
-    onActionClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onCardClick: () -> Unit,
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
@@ -192,6 +200,7 @@ private fun ShoppingListCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = SmallPadding)
+            .clickable(onClick = onCardClick)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -209,7 +218,7 @@ private fun ShoppingListCard(
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable(onClick = { onActionClick.invoke() })
+                    .clickable(onClick = { onDeleteClick.invoke() })
             )
         }
     }

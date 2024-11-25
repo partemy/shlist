@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
             shlistAppDI(
                 appDeclaration = { androidContext(this@MainActivity) }
             ) {
-                App()
+                ShlistApp()
             }
         }
     }

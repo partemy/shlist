@@ -9,7 +9,8 @@ import org.koin.compose.koinInject
 
 @Composable
 fun ShoppingListScreen(
-    viewModel: ShoppingListViewModel = koinInject()
+    viewModel: ShoppingListViewModel,
+    navigateBack: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
     LazyColumn {

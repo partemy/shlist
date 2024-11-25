@@ -8,13 +8,13 @@ import dev.partemy.shlist.ui.base.IViewEvent
 import kotlinx.coroutines.launch
 
 class ShoppingListViewModel(
+    private val listId: Int,
     private val getShoppingListItemsUseCase: GetShoppingListItemsUseCase,
-
 ) : BaseViewModel<ShoppingListViewState, ShoppingListViewEvent>() {
     override fun createInitialState(): ShoppingListViewState = ShoppingListViewState()
 
     override fun onTriggerEvent(event: ShoppingListViewEvent) {}
-    private val listId: Int = 1189
+
     init {
         getShoppingListItems()
     }

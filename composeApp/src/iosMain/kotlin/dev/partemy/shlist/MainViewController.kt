@@ -6,6 +6,6 @@ import platform.UIKit.UIViewController
 
 fun MainViewController(): UIViewController = ComposeUIViewController {
     shlistAppDI {
-        App()
+        ShlistApp()
     }
 }
