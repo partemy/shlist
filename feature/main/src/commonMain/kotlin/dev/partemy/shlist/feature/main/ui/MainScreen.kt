@@ -58,9 +58,10 @@ fun MainScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        floatingActionButton = { ShoppingListFloatingButton(onActionClick = { showDialog = true }) }
-    ) {
+        floatingActionButton = { MainFloatingButton(onActionClick = { showDialog = true }) }
+    ) { innerPadding ->
         Content(
+            modifier = Modifier.padding(innerPadding),
             state = uiState.value,
             onDeleteClick = { viewModel.onTriggerEvent(MainViewEvent.OnDeleteClick(it)) },
             onCardClick = navigateToList
@@ -78,6 +79,7 @@ fun MainScreen(
 
 @Composable
 private fun Content(
+    modifier: Modifier = Modifier,
     state: MainViewState,
     onDeleteClick: (Int) -> Unit,
     onCardClick: (Int) -> Unit,
@@ -85,7 +87,7 @@ private fun Content(
     if (state.lists.isEmpty())
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             Text(
                 text = ShlistResources.strings.noLists,
@@ -96,7 +98,7 @@ private fun Content(
     else
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
-            modifier = Modifier.fillMaxSize()
+            modifier =  modifier.fillMaxSize()
         ) {
             items(state.lists, key = { item -> item.id }) { list ->
                 ShoppingListCard(
@@ -109,7 +111,7 @@ private fun Content(
 }
 
 @Composable
-private fun ShoppingListFloatingButton(
+private fun MainFloatingButton(
     modifier: Modifier = Modifier,
     onActionClick: (String) -> Unit
 ) {

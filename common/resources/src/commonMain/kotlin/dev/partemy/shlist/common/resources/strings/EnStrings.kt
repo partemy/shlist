@@ -7,5 +7,7 @@ import dev.partemy.shlist.common.resources.Locales
 internal val EnStrings = ShlistStrings(
     newList = "New list",
     create = "Create",
-    noLists = "No lists"
+    noLists = "No lists",
+    newItem = "New item",
+    noItems = "No items",
 )

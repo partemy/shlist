@@ -4,4 +4,6 @@ data class ShlistStrings(
     val newList: String,
     val create: String,
     val noLists: String,
+    val newItem: String,
+    val noItems: String,
 )

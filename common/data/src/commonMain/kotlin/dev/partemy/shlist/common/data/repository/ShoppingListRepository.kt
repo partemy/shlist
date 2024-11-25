@@ -68,7 +68,7 @@ class ShoppingListRepository(
             shoppingListLocalDataSource.insertList(newList)
             Result.success(null)
         } else {
-            Result.failure(Exception("Failed to create shopping list on server."))
+            Result.failure(apiResult.exceptionOrNull() ?: Exception())
         }
     }
 
@@ -81,7 +81,7 @@ class ShoppingListRepository(
             shoppingListLocalDataSource.deleteList(listId)
             Result.success(null)
         } else {
-            Result.failure(Exception("Failed to delete shopping list"))
+            Result.failure(apiResult.exceptionOrNull() ?: Exception())
         }
     }
 

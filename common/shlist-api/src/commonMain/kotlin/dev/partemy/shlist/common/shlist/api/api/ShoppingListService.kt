@@ -63,7 +63,7 @@ class ShoppingListService(
     override suspend fun crossOffItem(itemId: Int): Result<CrossOffListItemResult> =
         apiCall {
             httpClient.post(urlString = ApiRoutes.CROSS_OFF) {
-                parameter(key = "item_id", value = itemId)
+                parameter(key = "id", value = itemId)
             }.body<CrossOffListItemResult>()
         }
 

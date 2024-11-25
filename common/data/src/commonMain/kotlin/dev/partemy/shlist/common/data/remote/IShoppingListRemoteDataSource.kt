@@ -8,4 +8,7 @@ interface IShoppingListRemoteDataSource {
     suspend fun getShoppingList(listId: Int): Result<List<ShoppingListItem>>
     suspend fun createShoppingList(key: String, name: String): Result<Int>
     suspend fun deleteShoppingList(listId: Int): Result<Boolean>
+    suspend fun addToShoppingList(listId: Int, name: String, count: Int): Result<Int>
+    suspend fun removeFromShoppingList(listId: Int, itemId: Int): Result<Nothing?>
+    suspend fun crossOffItem(itemId: Int): Result<Int>
 }

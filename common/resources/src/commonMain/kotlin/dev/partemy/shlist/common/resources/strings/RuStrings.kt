@@ -7,5 +7,7 @@ import dev.partemy.shlist.common.resources.Locales
 internal val RuStrings = ShlistStrings(
     newList = "Новый список",
     create = "Создать",
-    noLists = "Списки отсутствуют"
+    noLists = "Списки отсутствуют",
+    newItem = "Новый товар",
+    noItems = "Товары отсутствуют",
 )

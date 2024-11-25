@@ -12,6 +12,7 @@ import dev.partemy.shlist.common.domain.toResultState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,17 +36,48 @@ class ShoppingListItemsRepository(
 
     private val _listItemsFlow = MutableSharedFlow<ResultState<List<ShoppingListItem>>>(replay = 1)
     private val listItemsFlow = _listItemsFlow.asSharedFlow()
+    private var syncJob: Job? = null
 
     override fun getAllShoppingListItems(listId: Int): Flow<ResultState<List<ShoppingListItem>>> {
+        syncJob?.cancel()
         val cachedListItems = getListItemsFromDatabase(listId)
         val remoteListItems = listItemsFlow
         val mergeStrategy: MergeStrategy<ResultState<List<ShoppingListItem>>> =
             RequestResponseMergeStrategy()
-        CoroutineScope(Dispatchers.IO).launch {
+        syncJob = CoroutineScope(Dispatchers.IO).launch {
             schedulePeriodicSync(listId)
         }
         return cachedListItems.combine(remoteListItems, mergeStrategy::merge)
     }
+
+    override suspend fun createShoppingListItem(
+        listId: Int,
+        name: String,
+        count: Int
+    ): Result<Int> {
+        val apiRequest = shoppingListRemoteDataSource.addToShoppingList(listId, name, count)
+        return if (apiRequest.isSuccess) {
+            syncWithServer(listId)
+            Result.success(apiRequest.getOrThrow())
+        } else Result.failure(apiRequest.exceptionOrNull() ?: Exception())
+    }
+
+    override suspend fun deleteShoppingListItem(itemId: Int, listId: Int): Result<Nothing?> {
+        val apiRequest = shoppingListRemoteDataSource.removeFromShoppingList(listId, itemId)
+        return if (apiRequest.isSuccess) {
+            syncWithServer(listId)
+            Result.success(null)
+        } else Result.failure(apiRequest.exceptionOrNull() ?: Exception())
+    }
+
+    override suspend fun crossOutShoppingListItem(itemId: Int, listId: Int): Result<Nothing?> {
+        val apiRequest = shoppingListRemoteDataSource.crossOffItem(itemId)
+        return if (apiRequest.isSuccess) {
+            syncWithServer(listId)
+            Result.success(null)
+        } else Result.failure(apiRequest.exceptionOrNull() ?: Exception())
+    }
+
 
     private suspend fun syncWithServer(listId: Int) {
         _listItemsFlow.emitAll(
@@ -78,7 +110,7 @@ class ShoppingListItemsRepository(
                 }
             }
             .map { it.toResultState() }
-            .catch { emit(ResultState.Failure(exception = Exception("Error: get items from server"))) }
+            .catch { emit(ResultState.Failure(exception = Exception(it))) }
         return apiRequest
     }
 
@@ -94,6 +126,4 @@ class ShoppingListItemsRepository(
                     exception = Exception("Error: get items from db")
                 )
             }
-
-
 }
