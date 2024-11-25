@@ -26,6 +26,24 @@ interface ShoppingListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListItems(item: List<ShoppingListItemDBO>)
 
+    @Query("DELETE FROM shopping_list")
+    suspend fun clearLists()
+
+    @Transaction
+    suspend fun replaceAllLists(newList: List<ShoppingListDBO>) {
+        clearLists()
+        insertLists(newList)
+    }
+
+    @Query("DELETE FROM list_items WHERE list_id = :listId")
+    suspend fun clearListItems(listId: Int)
+
+    @Transaction
+    suspend fun replaceListItems(items: List<ShoppingListItemDBO>, listId: Int) {
+        clearListItems(listId)
+        insertListItems(items)
+    }
+
     @Query("DELETE FROM shopping_list WHERE id = :listId")
     suspend fun deleteList(listId: Int)
 
@@ -38,13 +56,5 @@ interface ShoppingListDao {
     @Query("UPDATE list_items SET isCrossed = :isCrossed WHERE id = :id")
     suspend fun crossOutListItem(id: Int, isCrossed: Boolean)
 
-    @Query("DELETE FROM shopping_list")
-    suspend fun clearTable()
-
-    @Transaction
-    suspend fun replaceAllLists(newList: List<ShoppingListDBO>) {
-        clearTable()
-        insertLists(newList)
-    }
 
 }

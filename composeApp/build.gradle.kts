@@ -40,6 +40,7 @@ kotlin {
             implementation(projects.common.resources)
             implementation(projects.ui)
             implementation(projects.feature.main)
+            implementation(projects.feature.shoppinglist)
         }
     }
 }

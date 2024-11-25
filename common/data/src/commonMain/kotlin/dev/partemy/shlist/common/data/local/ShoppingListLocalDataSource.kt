@@ -36,8 +36,11 @@ class ShoppingListLocalDataSource(
     override suspend fun insertListItems(item: List<ShoppingListItem>) =
         dao.insertListItems(item.map { it.toShoppingListItemDBO() })
 
-    override suspend fun replaceAllLists(item: List<ShoppingList>) =
-        dao.replaceAllLists(item.toShoppingListsBDO())
+    override suspend fun replaceAllLists(lists: List<ShoppingList>) =
+        dao.replaceAllLists(lists.toShoppingListsBDO())
+
+    override suspend fun replaceListItems(items: List<ShoppingListItem>, listId: Int) =
+        dao.replaceListItems(items.map { it.toShoppingListItemDBO() }, listId)
 
     override suspend fun deleteList(listId: Int) = dao.deleteList(listId)
 

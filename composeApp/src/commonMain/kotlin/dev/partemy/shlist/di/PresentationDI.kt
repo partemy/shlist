@@ -1,5 +1,6 @@
 package dev.partemy.shlist.di
 
 import dev.partemy.shlist.feature.main.di.mainViewModelModule
+import dev.partemy.shlist.feature.shoppinglist.di.shoppingListViewModelModule
 
-val presentationModule = mainViewModelModule
+val presentationModule = mainViewModelModule + shoppingListViewModelModule
