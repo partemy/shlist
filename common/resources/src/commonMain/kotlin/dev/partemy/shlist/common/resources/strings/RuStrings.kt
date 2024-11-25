@@ -5,5 +5,7 @@ import dev.partemy.shlist.common.resources.Locales
 
 @LyricistStrings(languageTag = Locales.RU)
 internal val RuStrings = ShlistStrings(
-    text = "текст",
+    newList = "Новый список",
+    create = "Создать",
+    noLists = "Списки отсутствуют"
 )

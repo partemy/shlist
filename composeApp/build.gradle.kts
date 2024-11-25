@@ -39,6 +39,7 @@ kotlin {
             implementation(projects.common.domain)
             implementation(projects.common.resources)
             implementation(projects.ui)
+            implementation(projects.feature.main)
         }
     }
 }

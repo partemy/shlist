@@ -6,7 +6,7 @@ import cafe.adriel.lyricist.LocalStrings
 import dev.partemy.shlist.common.resources.strings.ShlistStrings
 import shlist.common.resources.generated.resources.Res
 
-object ZmeuaiResources {
+object ShlistResources {
     val strings: ShlistStrings
         @Composable
         @ReadOnlyComposable

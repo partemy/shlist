@@ -5,5 +5,7 @@ import dev.partemy.shlist.common.resources.Locales
 
 @LyricistStrings(languageTag = Locales.EN, default = true)
 internal val EnStrings = ShlistStrings(
-    text = "text",
+    newList = "New list",
+    create = "Create",
+    noLists = "No lists"
 )

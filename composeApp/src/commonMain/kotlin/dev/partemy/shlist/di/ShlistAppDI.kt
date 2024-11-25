@@ -12,7 +12,7 @@ fun shlistAppDI(
     content: @Composable () -> Unit
 ) = KoinApplication(
     application = {
-        modules(dataModules + domainModules)
+        modules(dataModules + domainModules + presentationModule)
         appDeclaration()
     },
     content = content

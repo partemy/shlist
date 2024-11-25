@@ -1,5 +1,7 @@
 package dev.partemy.shlist.common.resources.strings
 
 data class ShlistStrings(
-    val text: String
+    val newList: String,
+    val create: String,
+    val noLists: String,
 )
