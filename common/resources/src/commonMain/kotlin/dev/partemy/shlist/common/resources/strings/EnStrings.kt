@@ -10,4 +10,8 @@ internal val EnStrings = ShlistStrings(
     noLists = "No lists",
     newItem = "New item",
     noItems = "No items",
+    createNewId = "Create new ID",
+    loginById = "Log in by ID",
+    login = "Log in",
+    id = "id",
 )

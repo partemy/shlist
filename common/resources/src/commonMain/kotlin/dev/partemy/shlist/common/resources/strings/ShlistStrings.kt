@@ -6,4 +6,8 @@ data class ShlistStrings(
     val noLists: String,
     val newItem: String,
     val noItems: String,
+    val createNewId: String,
+    val loginById: String,
+    val login: String,
+    val id: String,
 )

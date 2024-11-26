@@ -40,7 +40,7 @@ class ShoppingListRepository(
 
     private val key = preferences.getString("key")
 
-    override suspend fun setKey(key: String) {
+    override suspend fun setKey(key: String) { //TODO remove
         preferences.set("key", key)
     }
 

@@ -10,4 +10,8 @@ internal val RuStrings = ShlistStrings(
     noLists = "Списки отсутствуют",
     newItem = "Новый товар",
     noItems = "Товары отсутствуют",
+    createNewId = "Создать новый ID",
+    loginById = "Войти по ID",
+    login = "Войти",
+    id = "id",
 )

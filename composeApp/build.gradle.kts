@@ -41,6 +41,7 @@ kotlin {
             implementation(projects.ui)
             implementation(projects.feature.main)
             implementation(projects.feature.shoppinglist)
+            implementation(projects.feature.auth)
         }
     }
 }
