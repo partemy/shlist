@@ -14,5 +14,6 @@ internal val EnStrings = ShlistStrings(
     loginById = "Log in by ID",
     login = "Log in",
     id = "id",
-    lists = "Lists"
+    lists = "Lists",
+    offlineMode = "Offline mode"
 )

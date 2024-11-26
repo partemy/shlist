@@ -11,4 +11,5 @@ data class ShlistStrings(
     val login: String,
     val id: String,
     val lists: String,
+    val offlineMode: String,
 )

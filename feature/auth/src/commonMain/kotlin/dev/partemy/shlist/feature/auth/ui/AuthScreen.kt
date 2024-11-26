@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,40 +34,58 @@ import dev.partemy.shlist.ui.components.ShlistTextField
 import dev.partemy.shlist.ui.values.LargePadding
 import dev.partemy.shlist.ui.values.MediumPadding
 import dev.partemy.shlist.ui.values.SmallPadding
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel,
 ) {
-    val text = viewModel.text.collectAsState()
-    Content(
-        onCreateKey = { viewModel.onTriggerEvent(AuthViewEvent.Auth(it))},
-        key = text.value
-    )
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(viewModel.uiEvent) {
+        launch {
+            viewModel.uiEvent.collect { event ->
+                if (event is AuthViewEvent.SnackBarError) snackBarHostState.showSnackbar(message = event.message)
+            }
+        }
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { innerPadding ->
+        Content(
+            onCreateKey = { viewModel.onTriggerEvent(AuthViewEvent.Auth(it)) },
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }
 
 @Composable
 private fun Content(
+    modifier: Modifier = Modifier,
     onCreateKey: (String?) -> Unit,
-    key: String?
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var isLogin by remember { mutableStateOf(false) }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(LargePadding),
-        modifier = Modifier.fillMaxSize()
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Text(key.toString())
-        Button(
-            onClick = { isLogin = false; showDialog = true }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LargePadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = ShlistResources.strings.createNewId)
-        }
-        Button(
-            onClick = { isLogin = true; showDialog = true }
-        ) {
-            Text(text = ShlistResources.strings.loginById)
+            Button(
+                onClick = { isLogin = false; showDialog = true }
+            ) {
+                Text(text = ShlistResources.strings.createNewId)
+            }
+            Button(
+                onClick = { isLogin = true; showDialog = true }
+            ) {
+                Text(text = ShlistResources.strings.loginById)
+            }
         }
     }
     if (showDialog)

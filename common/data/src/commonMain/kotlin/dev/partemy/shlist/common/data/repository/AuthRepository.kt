@@ -4,7 +4,6 @@ import dev.partemy.shlist.common.data.local.IAuthLocalDataSource
 import dev.partemy.shlist.common.data.remote.IAuthRemoteDataSource
 import dev.partemy.shlist.common.domain.repository.IAuthRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 class AuthRepository(
     private val authRemoteDataSource: IAuthRemoteDataSource,
@@ -29,6 +28,7 @@ class AuthRepository(
     override suspend fun deleteKey(): Result<Nothing?> {
         return try {
             authLocalDataSource.setKey("")
+            authLocalDataSource.clearAll()
             Result.success(null)
         } catch (e: Exception) {
             Result.failure(exception = e)

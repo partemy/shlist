@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,10 +21,15 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +52,7 @@ import dev.partemy.shlist.ui.components.ShlistTextField
 import dev.partemy.shlist.ui.values.LargePadding
 import dev.partemy.shlist.ui.values.MediumPadding
 import dev.partemy.shlist.ui.values.SmallPadding
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.koinInject
 import shlist.common.resources.generated.resources.delete
@@ -57,16 +64,25 @@ fun MainScreen(
     navigateToList: (Pair<Int, String>) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
     var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel.uiEvent) {
+        launch {
+            viewModel.uiEvent.collect { event ->
+                if (event is MainViewEvent.SnackBackError) snackBarHostState.showSnackbar(message = event.message)
+            }
+        }
+    }
 
     Scaffold(
         floatingActionButton = { MainFloatingButton(onActionClick = { showDialog = true }) },
         topBar = {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().padding(LargePadding)
-            ){
+            ) {
                 Text(
                     text = ShlistResources.strings.lists,
                     style = MaterialTheme.typography.headlineMedium,
@@ -80,7 +96,8 @@ fun MainScreen(
                         .clickable(onClick = { viewModel.onTriggerEvent(MainViewEvent.LogOut()) })
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Content(
             modifier = Modifier.padding(innerPadding),
@@ -89,6 +106,13 @@ fun MainScreen(
             onCardClick = navigateToList
         )
     }
+    if (uiState.value.isLoading)
+        Dialog(onDismissRequest = {}) {
+            Box(modifier = Modifier.size(80.dp)) {
+                CircularProgressIndicator(modifier = Modifier.size(64.dp))
+            }
+        }
+
 
     if (showDialog) CreateListDialog(
         onDismissRequest = { showDialog = false },
@@ -122,6 +146,22 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
             modifier = modifier.fillMaxSize()
         ) {
+            if (state.isOffline)
+                item {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth().height(40.dp)
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                    ) {
+                        Text(
+                            text = ShlistResources.strings.offlineMode,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(
+                                SmallPadding
+                            )
+                        )
+                    }
+                }
             items(state.lists, key = { item -> item.id }) { list ->
                 ShoppingListCard(
                     name = list.name,

@@ -56,5 +56,12 @@ interface ShoppingListDao {
     @Query("UPDATE list_items SET isCrossed = :isCrossed WHERE id = :id")
     suspend fun crossOutListItem(id: Int, isCrossed: Boolean)
 
+    @Query("DELETE FROM list_items")
+    suspend fun clearAllListItems()
 
+    @Transaction
+    suspend fun clearAll() {
+        clearLists()
+        clearAllListItems()
+    }
 }

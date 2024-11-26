@@ -8,4 +8,6 @@ import dev.partemy.shlist.ui.base.IViewState
 data class ShoppingListViewState(
     val list: List<ShoppingListItem> = emptyList(),
     val title: String = "",
+    val isLoading: Boolean = true,
+    val isOffline: Boolean = false,
 ) : IViewState

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,11 +21,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +52,7 @@ import dev.partemy.shlist.ui.components.ShlistTextField
 import dev.partemy.shlist.ui.values.LargePadding
 import dev.partemy.shlist.ui.values.MediumPadding
 import dev.partemy.shlist.ui.values.SmallPadding
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 import shlist.common.resources.generated.resources.delete
 import shlist.common.resources.generated.resources.plus
@@ -58,7 +63,17 @@ fun ShoppingListScreen(
     navigateBack: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
     var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel.uiEvent) {
+        launch {
+            viewModel.uiEvent.collect { event ->
+                if (event is ShoppingListViewEvent.SnackBackError) snackBarHostState.showSnackbar(message = event.message)
+            }
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             ShoppingListFloatingButton(onActionClick = {
@@ -84,7 +99,8 @@ fun ShoppingListScreen(
                     modifier = Modifier.padding(LargePadding)
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
         Content(
             modifier = Modifier.padding(innerPadding),
@@ -98,6 +114,14 @@ fun ShoppingListScreen(
             onDismissRequest = { showDialog = false },
             onCreateListClick = { viewModel.onTriggerEvent(ShoppingListViewEvent.AddItem(it, 1)) }
         )
+
+    if (uiState.value.isLoading)
+        Dialog(onDismissRequest = {}) {
+            Box(modifier = Modifier.size(80.dp)) {
+                CircularProgressIndicator(modifier = Modifier.size(64.dp))
+            }
+        }
+
 }
 
 @Composable
@@ -123,6 +147,22 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
             modifier = modifier.fillMaxSize()
         ) {
+            if (state.isOffline)
+                item {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth().height(40.dp)
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                    ) {
+                        Text(
+                            text = ShlistResources.strings.offlineMode,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(
+                                SmallPadding
+                            )
+                        )
+                    }
+                }
             items(state.list, key = { item -> item.id }) { item ->
                 ShoppingListItemCard(
                     name = item.name,
