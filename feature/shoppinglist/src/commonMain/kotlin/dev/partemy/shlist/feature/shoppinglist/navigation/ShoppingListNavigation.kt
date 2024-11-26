@@ -12,21 +12,22 @@ import org.koin.core.parameter.parametersOf
 
 @Serializable
 data class ShoppingListRoute(
-    val listId: Int
+    val listId: Int,
+    val name: String,
 )
 
 fun NavController.navigateToShoppingList(
     navOptions: NavOptions? = null,
-    listId: Int,
-) = this.navigate(ShoppingListRoute(listId), navOptions)
+    args: Pair<Int, String>
+) = this.navigate(ShoppingListRoute(listId = args.first, name = args.second), navOptions)
 
 fun NavGraphBuilder.shoppingListScreen(
     navigateBack: () -> Unit
 ) {
-    composable<ShoppingListRoute> {  backStackEntry ->
+    composable<ShoppingListRoute> { backStackEntry ->
         val list: ShoppingListRoute = backStackEntry.toRoute()
         ShoppingListScreen(
-            viewModel = koinInject { parametersOf(list.listId)},
+            viewModel = koinInject { parametersOf(list.listId, list.name) },
             navigateBack = navigateBack
         )
     }

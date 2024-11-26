@@ -24,6 +24,6 @@ val useCaseModule = module {
     singleOf(::CrossOutShoppingListItemUseCase)
     singleOf(::CreateKeyUseCase)
     singleOf(::VerifyKeyUseCase)
-    singleOf(::CreateKeyUseCase)
+    singleOf(::DeleteKeyUseCase)
     singleOf(::GetKeyUseCase)
 }

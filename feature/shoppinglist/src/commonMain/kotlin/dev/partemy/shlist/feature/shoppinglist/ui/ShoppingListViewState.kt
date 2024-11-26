@@ -6,5 +6,6 @@ import dev.partemy.shlist.ui.base.IViewState
 
 @Stable
 data class ShoppingListViewState(
-    val list: List<ShoppingListItem> = emptyList()
+    val list: List<ShoppingListItem> = emptyList(),
+    val title: String = "",
 ) : IViewState

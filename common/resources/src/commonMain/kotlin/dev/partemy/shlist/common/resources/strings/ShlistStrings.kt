@@ -10,4 +10,5 @@ data class ShlistStrings(
     val loginById: String,
     val login: String,
     val id: String,
+    val lists: String,
 )

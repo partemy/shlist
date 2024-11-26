@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class ShoppingListViewModel(
     private val listId: Int,
+    private val listName: String,
     private val getShoppingListItemsUseCase: GetShoppingListItemsUseCase,
     private val addShoppingListItemUseCase: AddShoppingListItemUseCase,
     private val deleteShoppingListItemUseCase: DeleteShoppingListItemUseCase,
@@ -29,6 +30,7 @@ class ShoppingListViewModel(
 
     init {
         getShoppingListItems()
+        setState { currentState.copy(title = listName) }
     }
 
     private fun getShoppingListItems() = viewModelScope.launch {

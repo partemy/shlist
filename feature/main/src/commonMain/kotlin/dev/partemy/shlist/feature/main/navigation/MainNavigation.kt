@@ -1,6 +1,5 @@
 package dev.partemy.shlist.feature.main.navigation
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -17,7 +16,7 @@ fun NavController.navigateToMain(
 ) = this.navigate(MainRoute, navOptions)
 
 fun NavGraphBuilder.mainScreen(
-    navigateToList: (Int) -> Unit,
+    navigateToList: (Pair<Int, String>) -> Unit,
 ) {
     composable<MainRoute> {
         MainScreen(

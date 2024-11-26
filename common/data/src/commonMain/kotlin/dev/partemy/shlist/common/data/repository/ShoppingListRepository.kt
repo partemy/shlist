@@ -12,6 +12,7 @@ import dev.partemy.shlist.common.preferences.ShlistPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +40,7 @@ class ShoppingListRepository(
     private val shoppingListFlow = _shoppingListsFlow.asSharedFlow()
 
     private val key = preferences.getString("key")
+    private var syncJob: Job? = null
 
     override suspend fun setKey(key: String) { //TODO remove
         preferences.set("key", key)
@@ -46,13 +48,14 @@ class ShoppingListRepository(
 
 
     override suspend fun getAllShoppingLists(): Flow<ResultState<List<ShoppingList>>> {
+        syncJob?.cancel()
         val key = key.first()
             ?: return flow { ResultState.Failure<List<ShoppingList>>(exception = Exception("no key")) }
         val cachedShoppingLists = getAllListsFromDataBase()
         val remoteShoppingLists = shoppingListFlow
         val mergeStrategy: MergeStrategy<ResultState<List<ShoppingList>>> =
             RequestResponseMergeStrategy()
-        CoroutineScope(Dispatchers.IO).launch {
+        syncJob = CoroutineScope(Dispatchers.IO).launch {
             schedulePeriodicSync(key)
         }
         return cachedShoppingLists.combine(remoteShoppingLists, mergeStrategy::merge)

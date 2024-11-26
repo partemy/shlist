@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,6 +45,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import dev.partemy.shlist.common.resources.ShlistResources
 import dev.partemy.shlist.ui.components.ShlistTextField
+import dev.partemy.shlist.ui.values.LargePadding
 import dev.partemy.shlist.ui.values.MediumPadding
 import dev.partemy.shlist.ui.values.SmallPadding
 import org.jetbrains.compose.resources.vectorResource
@@ -57,7 +60,31 @@ fun ShoppingListScreen(
     val uiState = viewModel.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     Scaffold(
-        floatingActionButton = { ShoppingListFloatingButton(onActionClick = { showDialog = true }) }
+        floatingActionButton = {
+            ShoppingListFloatingButton(onActionClick = {
+                showDialog = true
+            })
+        },
+        topBar = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(start = SmallPadding)
+            ) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable(onClick = navigateBack)
+
+                )
+                Text(
+                    text = uiState.value.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(LargePadding)
+                )
+            }
+        }
     ) { innerPadding ->
         Content(
             modifier = Modifier.padding(innerPadding),
@@ -83,7 +110,7 @@ private fun Content(
     if (state.list.isEmpty())
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             Text(
                 text = ShlistResources.strings.noItems,
@@ -94,7 +121,7 @@ private fun Content(
     else
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             items(state.list, key = { item -> item.id }) { item ->
                 ShoppingListItemCard(
@@ -174,7 +201,7 @@ private fun CreateListItemDialog(
                     modifier = Modifier.focusRequester(focusRequester)
                 )
                 Button(
-                    onClick = { onCreateListClick(tfValue) }
+                    onClick = { onCreateListClick(tfValue); onDismissRequest() }
                 ) {
                     Text(
                         ShlistResources.strings.create,
