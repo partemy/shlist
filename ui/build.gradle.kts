@@ -23,6 +23,7 @@ kotlin {
                 api(libs.androidx.lifecycle.viewmodel)
                 api(libs.jetbrains.navigation.compose)
                 api(libs.serialization)
+                implementation(projects.common.resources)
             }
         }
         val androidMain by getting {

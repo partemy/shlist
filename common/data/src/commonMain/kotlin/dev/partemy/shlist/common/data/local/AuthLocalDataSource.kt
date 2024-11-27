@@ -8,8 +8,6 @@ class AuthLocalDataSource(
     private val dao: ShoppingListDao,
 ) : IAuthLocalDataSource {
     override suspend fun setKey(key: String) = preferences.set("key", key)
-
-    override fun getKey() = preferences.getString(key = "key")
-
     override suspend fun clearAll() = dao.clearAll()
+    override fun getKey() = preferences.getString(key = "key")
 }

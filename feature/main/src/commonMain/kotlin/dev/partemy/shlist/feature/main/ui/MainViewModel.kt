@@ -2,6 +2,7 @@ package dev.partemy.shlist.feature.main.ui
 
 import androidx.lifecycle.viewModelScope
 import dev.partemy.shlist.common.domain.ResultState
+import dev.partemy.shlist.common.domain.repository.IShoppingListRepository
 import dev.partemy.shlist.common.domain.usecase.CreateShoppingListUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteKeyUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteShoppingListUseCase
@@ -9,7 +10,11 @@ import dev.partemy.shlist.common.domain.usecase.GetAllShoppingListsUseCase
 import dev.partemy.shlist.common.domain.usecase.GetKeyUseCase
 import dev.partemy.shlist.ui.base.BaseViewModel
 import dev.partemy.shlist.ui.base.IViewEvent
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -29,31 +34,41 @@ class MainViewModel(
         }
     }
 
+    private val shoppingListsFlow = flow {
+        emitAll(getAllShoppingListsUseCase.invoke())
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = ResultState.Loading()
+    )
+
     init {
         getKey()
         getLists()
     }
 
-    private var getListsJob: Job? = null
-
     private fun getLists() {
-        getListsJob = viewModelScope.launch {
-            getAllShoppingListsUseCase.invoke().collect { result ->
+        viewModelScope.launch {
+            shoppingListsFlow.collect { result ->
                 when (result) {
                     is ResultState.Loading -> setState {
-                        currentState.copy(lists = result.data!!, isLoading = true)
+                        currentState.copy(lists = result.data ?: emptyList(), isLoading = true)
                     }
 
                     is ResultState.Failure -> setState {
                         currentState.copy(
-                            lists = result.data!!,
+                            lists = result.data ?: emptyList(),
                             isLoading = false,
                             isOffline = true
                         )
                     }
 
                     is ResultState.Success -> setState {
-                        currentState.copy(lists = result.data, isLoading = false, isOffline = false)
+                        currentState.copy(
+                            lists = result.data,
+                            isLoading = false,
+                            isOffline = false
+                        )
                     }
                 }
             }
@@ -61,7 +76,7 @@ class MainViewModel(
     }
 
     private fun getKey() = viewModelScope.launch {
-        getKeyUseCase.invoke().collect {
+        getKeyUseCase.invoke().collectLatest {
             setState { currentState.copy(key = it ?: "") }
         }
     }
@@ -86,8 +101,6 @@ class MainViewModel(
     }
 
     private fun logOut() = viewModelScope.launch {
-        setState { currentState.copy(lists = emptyList()) }
-        getListsJob?.cancel()
         deleteKeyUseCase.invoke()
     }
 }

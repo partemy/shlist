@@ -4,6 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface IAuthLocalDataSource {
     suspend fun setKey(key: String)
-    fun getKey(): Flow<String?>
     suspend fun clearAll()
+    fun getKey(): Flow<String?>
 }

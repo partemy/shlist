@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import dev.partemy.shlist.feature.auth.ui.AuthScreen
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
-/*
+
 @Serializable
 object AuthRoute
 
@@ -17,7 +17,6 @@ fun NavGraphBuilder.authScreen(navigateToList: () -> Unit) =
     composable<AuthRoute> {
         AuthScreen(
             viewModel = koinInject(),
+            navigateToList = navigateToList,
         )
     }
-
- */

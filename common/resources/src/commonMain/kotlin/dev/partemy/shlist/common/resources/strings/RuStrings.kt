@@ -15,5 +15,6 @@ internal val RuStrings = ShlistStrings(
     login = "Войти",
     id = "id",
     lists = "Списки",
-    offlineMode = "Оффлайн режим"
+    offlineMode = "Оффлайн режим",
+    name = "Имя",
 )

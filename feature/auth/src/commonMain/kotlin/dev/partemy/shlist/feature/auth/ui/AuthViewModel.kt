@@ -18,6 +18,7 @@ class AuthViewModel(
         when (event) {
             is AuthViewEvent.Auth -> auth(event.key)
             is AuthViewEvent.SnackBarError -> { }
+            is AuthViewEvent.SuccessAuth -> {}
         }
     }
 
@@ -28,6 +29,7 @@ class AuthViewModel(
                 message = result.exceptionOrNull().toString()
             )
         )
+        if (result.isSuccess) setEvent(AuthViewEvent.SuccessAuth())
     }
 
 }
@@ -35,4 +37,5 @@ class AuthViewModel(
 sealed class AuthViewEvent() : IViewEvent {
     class Auth(val key: String?) : AuthViewEvent()
     class SnackBarError(val message: String) : AuthViewEvent()
+    class SuccessAuth() : AuthViewEvent()
 }

@@ -7,6 +7,5 @@ fun ShoppingListItemDTO.toShoppingListItem(listId: Int) = ShoppingListItem(
     id, listId, name, is_crossed, created
 )
 
-
 fun Iterable<ShoppingListItemDTO>.toShoppingListItems(listId: Int) =
     this.map { it.toShoppingListItem(listId) }

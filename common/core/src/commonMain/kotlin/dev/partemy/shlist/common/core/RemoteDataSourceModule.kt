@@ -1,7 +1,5 @@
 package dev.partemy.shlist.common.core
 
-import dev.partemy.shlist.common.data.local.AuthLocalDataSource
-import dev.partemy.shlist.common.data.local.IAuthLocalDataSource
 import dev.partemy.shlist.common.data.remote.AuthRemoteDataSource
 import dev.partemy.shlist.common.data.remote.IAuthRemoteDataSource
 import dev.partemy.shlist.common.data.remote.IShoppingListRemoteDataSource

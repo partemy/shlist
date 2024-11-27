@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ShoppingListDao {
 
+    @Query("SELECT * FROM shopping_list")
+    fun getAllLists(): Flow<List<ShoppingListWithItemsDBO>>
+
+    @Query("DELETE FROM shopping_list WHERE id = :listId")
+    suspend fun deleteList(listId: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertList(list: ShoppingListDBO)
 
@@ -21,13 +27,16 @@ interface ShoppingListDao {
     suspend fun insertLists(list: List<ShoppingListDBO>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertListItem(item: ShoppingListItemDBO)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListItems(item: List<ShoppingListItemDBO>)
 
     @Query("DELETE FROM shopping_list")
     suspend fun clearLists()
+
+    @Query("DELETE FROM list_items WHERE list_id = :listId")
+    suspend fun clearListItems(listId: Int)
+
+    @Query("DELETE FROM list_items")
+    suspend fun clearAllListItems()
 
     @Transaction
     suspend fun replaceAllLists(newList: List<ShoppingListDBO>) {
@@ -35,29 +44,11 @@ interface ShoppingListDao {
         insertLists(newList)
     }
 
-    @Query("DELETE FROM list_items WHERE list_id = :listId")
-    suspend fun clearListItems(listId: Int)
-
     @Transaction
     suspend fun replaceListItems(items: List<ShoppingListItemDBO>, listId: Int) {
         clearListItems(listId)
         insertListItems(items)
     }
-
-    @Query("DELETE FROM shopping_list WHERE id = :listId")
-    suspend fun deleteList(listId: Int)
-
-    @Delete
-    suspend fun deleteListItem(item: ShoppingListItemDBO)
-
-    @Query("SELECT * FROM shopping_list")
-    fun getAllLists(): Flow<List<ShoppingListWithItemsDBO>>
-
-    @Query("UPDATE list_items SET isCrossed = :isCrossed WHERE id = :id")
-    suspend fun crossOutListItem(id: Int, isCrossed: Boolean)
-
-    @Query("DELETE FROM list_items")
-    suspend fun clearAllListItems()
 
     @Transaction
     suspend fun clearAll() {

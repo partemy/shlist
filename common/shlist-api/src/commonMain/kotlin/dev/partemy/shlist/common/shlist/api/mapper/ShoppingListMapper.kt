@@ -10,7 +10,3 @@ fun ShoppingListDTO.toShoppingList() = ShoppingList(
 )
 
 fun Iterable<ShoppingListDTO>.toShoppingLists() = this.map { it.toShoppingList() }
-
-fun ShoppingList.toShoppingListDTO() = ShoppingListDTO(
-    created, id, name
-)

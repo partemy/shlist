@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import dev.partemy.shlist.feature.main.ui.MainScreen
+import dev.partemy.shlist.feature.main.ui.MainViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
@@ -17,11 +18,14 @@ fun NavController.navigateToMain(
 
 fun NavGraphBuilder.mainScreen(
     navigateToList: (Pair<Int, String>) -> Unit,
+    navigateToAuth: () -> Unit,
+    viewModel: MainViewModel
 ) {
     composable<MainRoute> {
         MainScreen(
             viewModel = koinInject(),
-            navigateToList = navigateToList
+            navigateToList = navigateToList,
+            navigateToAuth = navigateToAuth,
         )
     }
 }

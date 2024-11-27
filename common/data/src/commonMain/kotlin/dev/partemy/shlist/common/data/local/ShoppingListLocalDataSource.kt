@@ -16,7 +16,7 @@ class ShoppingListLocalDataSource(
 ) : IShoppingListLocalDataSource {
 
     override fun getAllLists(): Flow<List<ShoppingList>> =
-        dao.getAllLists().map { it.map { it.list.toShoppingList() } }
+        dao.getAllLists().map { it -> it.map { it.list.toShoppingList() } }
 
     override fun getAllListItems(listId: Int): Flow<List<ShoppingListItem>> =
         dao.getAllLists().map { list ->
@@ -27,15 +27,6 @@ class ShoppingListLocalDataSource(
 
     override suspend fun insertList(list: ShoppingList) = dao.insertList(list.toShoppingListDBO())
 
-    override suspend fun insertLists(lists: List<ShoppingList>) =
-        dao.insertLists(lists.toShoppingListsBDO())
-
-    override suspend fun insertListItem(item: ShoppingListItem) =
-        dao.insertListItem(item.toShoppingListItemDBO())
-
-    override suspend fun insertListItems(item: List<ShoppingListItem>) =
-        dao.insertListItems(item.map { it.toShoppingListItemDBO() })
-
     override suspend fun replaceAllLists(lists: List<ShoppingList>) =
         dao.replaceAllLists(lists.toShoppingListsBDO())
 
@@ -44,10 +35,5 @@ class ShoppingListLocalDataSource(
 
     override suspend fun deleteList(listId: Int) = dao.deleteList(listId)
 
-    override suspend fun deleteListItem(item: ShoppingListItem) =
-        dao.deleteListItem(item.toShoppingListItemDBO())
-
-    override suspend fun crossOutListItem(id: Int, isCrossed: Boolean) =
-        dao.crossOutListItem(id, isCrossed)
 
 }

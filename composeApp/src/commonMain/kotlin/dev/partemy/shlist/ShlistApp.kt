@@ -21,24 +21,10 @@ import org.koin.compose.koinInject
 
 @Composable
 fun ShlistApp() {
-
     val navHostController = rememberNavController()
-    val key = koinInject<GetKeyUseCase>().invoke().collectAsState(initial = "0")
     ProvideShlistStrings {
         ShlistTheme {
-            if (key.value != "0") {
-                if (key.value.isNullOrBlank()) AuthScreen(viewModel = koinInject())
-                else ShlistNavHost(navHostController)
-            } else {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(128.dp))
-                }
-            }
+            ShlistNavHost(navHostController)
         }
     }
 }

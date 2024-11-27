@@ -8,6 +8,8 @@ import dev.partemy.shlist.common.domain.usecase.DeleteShoppingListItemUseCase
 import dev.partemy.shlist.common.domain.usecase.GetShoppingListItemsUseCase
 import dev.partemy.shlist.ui.base.BaseViewModel
 import dev.partemy.shlist.ui.base.IViewEvent
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ShoppingListViewModel(
@@ -29,24 +31,27 @@ class ShoppingListViewModel(
         }
     }
 
+    private val shoppingListsItemsFlow = getShoppingListItemsUseCase.invoke(listId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ResultState.Loading())
+
     init {
         getShoppingListItems()
         setState { currentState.copy(title = listName) }
     }
 
     private fun getShoppingListItems() = viewModelScope.launch {
-        getShoppingListItemsUseCase.invoke(listId).collect { result ->
+        shoppingListsItemsFlow.collect { result ->
             when (result) {
                 is ResultState.Failure -> setState {
-                    currentState.copy(list = result.data!!, isLoading = false, isOffline = true)
+                    currentState.copy(list = result.data ?: emptyList(), isLoading = false, isOffline = true)
                 }
 
                 is ResultState.Loading -> setState {
-                    currentState.copy(list = result.data!!, isLoading = true)
+                    currentState.copy(list = result.data ?: emptyList(), isLoading = true)
                 }
 
                 is ResultState.Success -> setState {
-                    currentState.copy(list = result.data!!, isLoading = false, isOffline = false)
+                    currentState.copy(list = result.data, isLoading = false, isOffline = false)
                 }
             }
         }

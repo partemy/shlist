@@ -9,14 +9,14 @@ import dev.partemy.shlist.common.resources.strings.EnStrings
 import dev.partemy.shlist.common.resources.strings.RuStrings
 import dev.partemy.shlist.common.resources.strings.ShlistStrings
 
-internal val ZmeuaiAppStrings: Map<String, ShlistStrings> = mapOf(
+internal val ShlistAppStrings: Map<String, ShlistStrings> = mapOf(
     Locales.EN to EnStrings,
     Locales.RU to RuStrings,
 )
 
 @Composable
 internal fun rememberShlistStrings(): Lyricist<ShlistStrings> =
-    rememberStrings(ZmeuaiAppStrings)
+    rememberStrings(ShlistAppStrings)
 
 @Composable
 fun ProvideShlistStrings(
