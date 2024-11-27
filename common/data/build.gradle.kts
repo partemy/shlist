@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -29,9 +29,4 @@ kotlin {
 
 android {
     namespace = "dev.partemy.shlist.common.data"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }

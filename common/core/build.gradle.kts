@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -11,9 +12,11 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-            api(libs.koin.android)
-            api(libs.koin.androidx.compose)
+        val androidMain by getting {
+            dependencies {
+                api(libs.koin.android)
+                api(libs.koin.androidx.compose)
+            }
         }
         commonMain.dependencies {
             implementation(projects.common.data)
@@ -25,17 +28,10 @@ kotlin {
             api(libs.koin.core)
             api(libs.koin.compose)
         }
-        iosMain.dependencies {
-
-        }
+        val iosMain by creating
     }
 }
 
 android {
     namespace = "dev.partemy.shlist.common.core"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }

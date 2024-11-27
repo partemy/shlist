@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.serialization)
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -12,25 +13,26 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.bundles.ktor)
+                api(libs.ktor.client.core)
+                implementation(projects.common.domain)
+            }
         }
-        commonMain.dependencies {
-            implementation(libs.bundles.ktor)
-            api(libs.ktor.client.core)
-            implementation(projects.common.domain)
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.okhttp)
+            }
         }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+        val iosMain by creating {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
         }
     }
 }
 
 android {
     namespace = "dev.partemy.shlist.common.shlist.api"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }

@@ -28,21 +28,25 @@ kotlin {
     }
     
     sourceSets {
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.common.data)
+                implementation(projects.common.core)
+                implementation(projects.common.domain)
+                implementation(projects.common.resources)
+                implementation(projects.ui)
+                implementation(projects.feature.main)
+                implementation(projects.feature.shoppinglist)
+                implementation(projects.feature.auth)
+            }
         }
-        commonMain.dependencies {
-            implementation(projects.common.data)
-            implementation(projects.common.core)
-            implementation(projects.common.domain)
-            implementation(projects.common.resources)
-            implementation(projects.ui)
-            implementation(projects.feature.main)
-            implementation(projects.feature.shoppinglist)
-            implementation(projects.feature.auth)
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+            }
         }
+        val iosMain by creating
     }
 }
 

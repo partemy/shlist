@@ -2,6 +2,7 @@ rootProject.name = "shlist"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("gradle/build-logic")
     repositories {
         google {
             mavenContent {

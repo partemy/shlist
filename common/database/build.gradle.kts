@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -14,19 +14,17 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.room.runtime)
+                implementation(libs.sqlite.bundled)
+                implementation(libs.sqlite)
+                implementation(libs.koin.core)
+                implementation(projects.common.domain)
+            }
         }
-        commonMain.dependencies {
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
-            implementation(libs.sqlite)
-            implementation(libs.koin.core)
-            implementation(projects.common.domain)
-        }
-        iosMain.dependencies {
-
-        }
+        val androidMain by getting
+        val iosMain by creating
     }
 }
 
@@ -36,11 +34,6 @@ room {
 
 android {
     namespace = "dev.partemy.shlist.common.database"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }
 
 dependencies {

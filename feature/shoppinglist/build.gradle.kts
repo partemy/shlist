@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.serialization)
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -14,27 +15,24 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.ui)
+                implementation(projects.common.resources)
+                implementation(projects.common.domain)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+            }
         }
-        commonMain.dependencies {
-            implementation(projects.ui)
-            implementation(projects.common.resources)
-            implementation(projects.common.domain)
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+            }
         }
-        iosMain.dependencies {
-
-        }
+        val iosMain by creating
     }
 }
 
 android {
     namespace = "dev.partemy.shlist.feature.shoppinglist"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }

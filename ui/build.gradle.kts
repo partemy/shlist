@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    id("dev.partemy.gradle.common.library.android")
 }
 
 kotlin {
@@ -13,29 +14,25 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
+        val commonMain by getting {
+            dependencies {
+                api(compose.ui)
+                api(compose.foundation)
+                api(compose.material3)
+                api(compose.runtime)
+                api(libs.androidx.lifecycle.viewmodel)
+                api(libs.jetbrains.navigation.compose)
+                api(libs.serialization)
+            }
         }
-        commonMain.dependencies {
-            api(compose.ui)
-            api(compose.foundation)
-            api(compose.material3)
-            api(compose.runtime)
-            api(libs.androidx.lifecycle.viewmodel)
-            api(libs.jetbrains.navigation.compose)
-            api(libs.serialization)
-        }
-        iosMain.dependencies {
-
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+            }
         }
     }
 }
 
 android {
     namespace = "dev.partemy.shlist.ui"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }
