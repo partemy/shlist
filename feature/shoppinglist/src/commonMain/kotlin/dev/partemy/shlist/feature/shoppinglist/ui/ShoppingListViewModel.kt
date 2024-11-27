@@ -8,7 +8,6 @@ import dev.partemy.shlist.common.domain.usecase.CrossOutShoppingListItemUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteShoppingListItemUseCase
 import dev.partemy.shlist.common.domain.usecase.GetShoppingListItemsUseCase
 import dev.partemy.shlist.ui.base.BaseViewModel
-import dev.partemy.shlist.ui.base.IViewEvent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
