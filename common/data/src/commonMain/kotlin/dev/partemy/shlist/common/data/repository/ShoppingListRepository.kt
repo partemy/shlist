@@ -13,13 +13,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -27,7 +29,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class ShoppingListRepository(
     private val shoppingListRemoteDataSource: IShoppingListRemoteDataSource,
@@ -36,28 +37,25 @@ class ShoppingListRepository(
 ) : IShoppingListRepository {
 
     private val _shoppingListsFlow =
-        MutableSharedFlow<ResultState<List<ShoppingList>>>(replay = 1)
+        MutableStateFlow<ResultState<List<ShoppingList>>>(ResultState.Loading())
     private val shoppingListFlow = _shoppingListsFlow.asSharedFlow()
-
     private val key = preferences.getString("key")
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var syncJob: Job? = null
 
-    override suspend fun setKey(key: String) { //TODO remove
-        preferences.set("key", key)
-    }
-
-
     override suspend fun getAllShoppingLists(): Flow<ResultState<List<ShoppingList>>> {
-        syncJob?.cancel()
+        syncJob?.cancelAndJoin()
+        _shoppingListsFlow.value = ResultState.Loading()
+
         val key = key.first()
             ?: return flow { ResultState.Failure<List<ShoppingList>>(exception = Exception("no key")) }
         val cachedShoppingLists = getAllListsFromDataBase()
         val remoteShoppingLists = shoppingListFlow
         val mergeStrategy: MergeStrategy<ResultState<List<ShoppingList>>> =
             RequestResponseMergeStrategy()
-        syncJob = CoroutineScope(Dispatchers.IO).launch {
-            schedulePeriodicSync(key)
-        }
+
+        schedulePeriodicSync(key)
+
         return cachedShoppingLists.combine(remoteShoppingLists, mergeStrategy::merge)
     }
 
@@ -89,20 +87,33 @@ class ShoppingListRepository(
     }
 
     private suspend fun syncWithServer(key: String) {
-        _shoppingListsFlow.emitAll(
+        try {
             getAllListsFromServer(key)
-                .onStart { emit(ResultState.Loading()) }
-                .catch { emit(ResultState.Failure(exception = Exception(it))) }
-        )
+                .onStart { _shoppingListsFlow.value = ResultState.Loading() }
+                .collect { result ->
+                    _shoppingListsFlow.value = result
+                }
+        } catch (e: Exception) {
+            _shoppingListsFlow.value = ResultState.Failure(exception = e)
+        }
     }
 
-    private suspend fun schedulePeriodicSync(
+    private fun schedulePeriodicSync(
         key: String,
         intervalMs: Long = 5000L,
     ) {
-        while (coroutineContext.isActive) {
-            _shoppingListsFlow.emitAll(getAllListsFromServer(key))
-            delay(intervalMs)
+        syncJob?.cancel()
+        syncJob = coroutineScope.launch {
+            while (isActive) {
+                try {
+                    getAllListsFromServer(key).collect { result ->
+                        _shoppingListsFlow.value = result
+                    }
+                } catch (e: Exception) {
+                    _shoppingListsFlow.value = ResultState.Failure(exception = e)
+                }
+                delay(intervalMs)
+            }
         }
     }
 
@@ -127,7 +138,7 @@ class ShoppingListRepository(
     private fun getAllListsFromDataBase(): Flow<ResultState<List<ShoppingList>>> =
         shoppingListLocalDataSource.getAllLists()
             .map<List<ShoppingList>, ResultState<List<ShoppingList>>> { ResultState.Success(it) }
-            .onStart { ResultState.Loading(data = null) }
+            .onStart { emit(ResultState.Loading(data = null)) }
             .catch {
                 ResultState.Failure(
                     exception = Exception("error: get lists from db"),
