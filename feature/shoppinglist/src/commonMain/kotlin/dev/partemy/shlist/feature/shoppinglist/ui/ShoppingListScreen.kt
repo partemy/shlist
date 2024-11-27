@@ -83,7 +83,7 @@ fun ShoppingListScreen(
             buttonText = ShlistResources.strings.create,
         )
 
-    if (uiState.value.isLoading)
+    if (uiState.value.screenState == ScreenState.LOADING)
         ShlistLoadingIndicator()
 }
 
@@ -110,7 +110,7 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
             modifier = modifier.fillMaxSize()
         ) {
-            if (state.isOffline)
+            if (state.screenState == ScreenState.OFFLINE)
                 item { OfflineIndicator() }
             items(state.list, key = { item -> item.id }) { item ->
                 ShlistCard(

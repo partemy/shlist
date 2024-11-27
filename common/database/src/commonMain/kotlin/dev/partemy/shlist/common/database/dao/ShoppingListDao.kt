@@ -1,13 +1,12 @@
 package dev.partemy.shlist.common.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import dev.partemy.shlist.common.database.entity.ShoppingListItemDBO
 import dev.partemy.shlist.common.database.entity.ShoppingListDBO
+import dev.partemy.shlist.common.database.entity.ShoppingListItemDBO
 import dev.partemy.shlist.common.database.relation.ShoppingListWithItemsDBO
 import kotlinx.coroutines.flow.Flow
 

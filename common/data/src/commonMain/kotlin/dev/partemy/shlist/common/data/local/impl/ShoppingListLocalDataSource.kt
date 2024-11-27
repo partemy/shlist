@@ -1,5 +1,6 @@
-package dev.partemy.shlist.common.data.local
+package dev.partemy.shlist.common.data.local.impl
 
+import dev.partemy.shlist.common.data.local.IShoppingListLocalDataSource
 import dev.partemy.shlist.common.database.dao.ShoppingListDao
 import dev.partemy.shlist.common.database.mapper.toShoppingList
 import dev.partemy.shlist.common.database.mapper.toShoppingListDBO

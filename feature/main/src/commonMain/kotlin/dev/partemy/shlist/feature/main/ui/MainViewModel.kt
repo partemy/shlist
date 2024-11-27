@@ -2,14 +2,13 @@ package dev.partemy.shlist.feature.main.ui
 
 import androidx.lifecycle.viewModelScope
 import dev.partemy.shlist.common.domain.ResultState
-import dev.partemy.shlist.common.domain.repository.IShoppingListRepository
+import dev.partemy.shlist.common.domain.model.ShoppingList
 import dev.partemy.shlist.common.domain.usecase.CreateShoppingListUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteKeyUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteShoppingListUseCase
 import dev.partemy.shlist.common.domain.usecase.GetAllShoppingListsUseCase
 import dev.partemy.shlist.common.domain.usecase.GetKeyUseCase
 import dev.partemy.shlist.ui.base.BaseViewModel
-import dev.partemy.shlist.ui.base.IViewEvent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
@@ -50,27 +49,7 @@ class MainViewModel(
     private fun getLists() {
         viewModelScope.launch {
             shoppingListsFlow.collect { result ->
-                when (result) {
-                    is ResultState.Loading -> setState {
-                        currentState.copy(lists = result.data ?: emptyList(), isLoading = true)
-                    }
-
-                    is ResultState.Failure -> setState {
-                        currentState.copy(
-                            lists = result.data ?: emptyList(),
-                            isLoading = false,
-                            isOffline = true
-                        )
-                    }
-
-                    is ResultState.Success -> setState {
-                        currentState.copy(
-                            lists = result.data,
-                            isLoading = false,
-                            isOffline = false
-                        )
-                    }
-                }
+                result.toState()
             }
         }
     }
@@ -84,30 +63,44 @@ class MainViewModel(
 
     private fun createShoppingList(name: String) = viewModelScope.launch {
         val result = createShoppingListUseCase.invoke(name)
-        if (result.isFailure) setEvent(
-            MainViewEvent.SnackBackError(
-                message = result.exceptionOrNull().toString()
-            )
-        )
+        if (result.isFailure) setSnackBarError(result)
     }
 
     private fun deleteShoppingList(listId: Int) = viewModelScope.launch {
         val result = deleteShoppingListUseCase.invoke(listId)
-        if (result.isFailure) setEvent(
-            MainViewEvent.SnackBackError(
-                message = result.exceptionOrNull().toString()
-            )
-        )
+        if (result.isFailure) setSnackBarError(result)
     }
 
     private fun logOut() = viewModelScope.launch {
         deleteKeyUseCase.invoke()
     }
+
+    private fun ResultState<List<ShoppingList>>.toState() {
+        when (this) {
+            is ResultState.Failure -> setState {
+                currentState.copy(
+                    lists = this@toState.data ?: emptyList(),
+                    state = ScreenState.OFFLINE
+                )
+            }
+
+            is ResultState.Loading -> setState {
+                currentState.copy(
+                    lists = this@toState.data ?: emptyList(),
+                    state = ScreenState.LOADING
+                )
+            }
+
+            is ResultState.Success -> setState {
+                currentState.copy(
+                    lists = this@toState.data,
+                    state = ScreenState.SUCCESS)
+            }
+        }
+    }
+
+    private fun <T> setSnackBarError(result: Result<T>) = setEvent(
+        MainViewEvent.SnackBackError(message = result.exceptionOrNull().toString())
+    )
 }
 
-sealed class MainViewEvent : IViewEvent {
-    class CreateList(val name: String) : MainViewEvent()
-    class DeleteList(val listId: Int) : MainViewEvent()
-    class LogOut() : MainViewEvent()
-    class SnackBackError(val message: String) : MainViewEvent()
-}

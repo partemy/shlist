@@ -8,6 +8,11 @@ import dev.partemy.shlist.ui.base.IViewState
 data class MainViewState(
     val key: String = "",
     val lists: List<ShoppingList> = emptyList(),
-    val isLoading: Boolean = true,
-    val isOffline: Boolean = false,
+    val state: ScreenState = ScreenState.LOADING,
 ) : IViewState
+
+enum class ScreenState {
+    LOADING,
+    OFFLINE,
+    SUCCESS;
+}

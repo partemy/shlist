@@ -23,7 +23,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import dev.partemy.shlist.common.resources.ShlistResources
 import dev.partemy.shlist.ui.values.MediumPadding
 import dev.partemy.shlist.ui.values.SmallPadding
 

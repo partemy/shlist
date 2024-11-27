@@ -1,9 +1,9 @@
 package dev.partemy.shlist.common.core
 
-import dev.partemy.shlist.common.data.local.AuthLocalDataSource
+import dev.partemy.shlist.common.data.local.impl.AuthLocalDataSource
 import dev.partemy.shlist.common.data.local.IAuthLocalDataSource
 import dev.partemy.shlist.common.data.local.IShoppingListLocalDataSource
-import dev.partemy.shlist.common.data.local.ShoppingListLocalDataSource
+import dev.partemy.shlist.common.data.local.impl.ShoppingListLocalDataSource
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

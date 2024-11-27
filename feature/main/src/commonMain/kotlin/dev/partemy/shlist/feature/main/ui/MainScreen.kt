@@ -1,13 +1,11 @@
 package dev.partemy.shlist.feature.main.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -80,7 +78,7 @@ fun MainScreen(
             onCardClick = navigateToList
         )
     }
-    if (uiState.value.isLoading)
+    if (uiState.value.state == ScreenState.LOADING)
         ShlistLoadingIndicator()
 
     if (showDialog) ShlistCreationDialog(
@@ -117,7 +115,7 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(SmallPadding),
             modifier = modifier.fillMaxSize()
         ) {
-            if (state.isOffline)
+            if (state.state == ScreenState.OFFLINE)
                 item { OfflineIndicator() }
 
             items(state.lists, key = { item -> item.id }) { list ->

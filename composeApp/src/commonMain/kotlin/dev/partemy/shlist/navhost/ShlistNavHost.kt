@@ -21,7 +21,6 @@ import dev.partemy.shlist.feature.auth.navigation.navigateToAuth
 import dev.partemy.shlist.feature.main.navigation.MainRoute
 import dev.partemy.shlist.feature.main.navigation.mainScreen
 import dev.partemy.shlist.feature.main.navigation.navigateToMain
-import dev.partemy.shlist.feature.main.ui.MainViewModel
 import dev.partemy.shlist.feature.shoppinglist.navigation.navigateToShoppingList
 import dev.partemy.shlist.feature.shoppinglist.navigation.shoppingListScreen
 import org.koin.compose.koinInject
@@ -35,7 +34,6 @@ fun ShlistNavHost(
         LoadingScreen()
     } else {
         val startDestination: Any = if (keyState.isNullOrBlank()) AuthRoute else MainRoute
-        val mainViewModel: MainViewModel = koinInject()
 
         NavHost(
             navController = navController,
@@ -44,7 +42,6 @@ fun ShlistNavHost(
             mainScreen(
                 navigateToList = { navController.navigateToShoppingList(args = it) },
                 navigateToAuth = { navController.navigateToAuth() },
-                viewModel = mainViewModel
             )
             shoppingListScreen { navController.popBackStack() }
             authScreen { navController.navigateToMain() }

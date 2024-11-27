@@ -2,6 +2,7 @@ package dev.partemy.shlist.feature.shoppinglist.ui
 
 import androidx.lifecycle.viewModelScope
 import dev.partemy.shlist.common.domain.ResultState
+import dev.partemy.shlist.common.domain.model.ShoppingListItem
 import dev.partemy.shlist.common.domain.usecase.AddShoppingListItemUseCase
 import dev.partemy.shlist.common.domain.usecase.CrossOutShoppingListItemUseCase
 import dev.partemy.shlist.common.domain.usecase.DeleteShoppingListItemUseCase
@@ -41,50 +42,55 @@ class ShoppingListViewModel(
 
     private fun getShoppingListItems() = viewModelScope.launch {
         shoppingListsItemsFlow.collect { result ->
-            when (result) {
-                is ResultState.Failure -> setState {
-                    currentState.copy(list = result.data ?: emptyList(), isLoading = false, isOffline = true)
-                }
-
-                is ResultState.Loading -> setState {
-                    currentState.copy(list = result.data ?: emptyList(), isLoading = true)
-                }
-
-                is ResultState.Success -> setState {
-                    currentState.copy(list = result.data, isLoading = false, isOffline = false)
-                }
-            }
+            result.toState()
         }
     }
 
 
     private fun addShoppingListItem(name: String, count: Int) = viewModelScope.launch {
         val result = addShoppingListItemUseCase.invoke(listId, name, count)
-        if (result.isFailure) setEvent(
-            ShoppingListViewEvent.SnackBackError(message = result.exceptionOrNull().toString())
-        )
+        if (result.isFailure) setSnackBarError(result)
     }
 
 
     private fun deleteShoppingListItem(itemId: Int) = viewModelScope.launch {
         val result = deleteShoppingListItemUseCase.invoke(itemId, listId)
-        if (result.isFailure) setEvent(
-            ShoppingListViewEvent.SnackBackError(message = result.exceptionOrNull().toString())
-        )
+        if (result.isFailure) setSnackBarError(result)
     }
 
 
     private fun crossOutShoppingListItem(itemId: Int) = viewModelScope.launch {
         val result = crossOutShoppingListItemUseCase.invoke(itemId, listId)
-        if (result.isFailure) setEvent(
-            ShoppingListViewEvent.SnackBackError(message = result.exceptionOrNull().toString())
-        )
+        if (result.isFailure) setSnackBarError(result)
     }
+
+    private fun ResultState<List<ShoppingListItem>>.toState() {
+        when (this) {
+            is ResultState.Failure -> setState {
+                currentState.copy(
+                    list = this@toState.data ?: emptyList(),
+                    screenState = ScreenState.OFFLINE
+                )
+            }
+
+            is ResultState.Loading -> setState {
+                currentState.copy(
+                    list = this@toState.data ?: emptyList(),
+                    screenState = ScreenState.LOADING
+                )
+            }
+
+            is ResultState.Success -> setState {
+                currentState.copy(list = this@toState.data, screenState = ScreenState.SUCCESS)
+            }
+        }
+    }
+
+    private fun <T> setSnackBarError(result: Result<T>) = setEvent(
+        ShoppingListViewEvent.SnackBackError(message = result.exceptionOrNull().toString())
+    )
+
 }
 
-sealed class ShoppingListViewEvent : IViewEvent {
-    class AddItem(val name: String, val count: Int) : ShoppingListViewEvent()
-    class DeleteItem(val itemId: Int) : ShoppingListViewEvent()
-    class CrossOutItem(val itemId: Int) : ShoppingListViewEvent()
-    class SnackBackError(val message: String) : ShoppingListViewEvent()
-}
+
+
